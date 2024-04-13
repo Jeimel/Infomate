@@ -5,8 +5,6 @@ import config
 
 class AppHandler:
     def __init__(self):
-        self.args = self.parser.parse_args()
-
         options = RGBMatrixOptions()
         options.rows = config.LED_ROWS
         options.cols = config.LED_COLS
