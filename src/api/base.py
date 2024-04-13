@@ -2,7 +2,6 @@ import time
 import sys
 
 from rgbmatrix import RGBMatrix, graphics
-import config
 
 
 class Base:

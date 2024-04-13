@@ -1,10 +1,10 @@
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
-from base import Base
+from apps.clock.clock import Clock
 import config
 
 
 class AppHandler:
-    def __init__(self, app: Base):
+    def __init__(self):
         self.args = self.parser.parse_args()
 
         options = RGBMatrixOptions()
@@ -29,4 +29,5 @@ class AppHandler:
 
         self.matrix = RGBMatrix(options=options)
 
-        app.process()
+        clock = Clock(self.matrix)
+        clock.process()

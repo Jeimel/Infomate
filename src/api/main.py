@@ -10,5 +10,4 @@ api_router.include_router(account.router, prefix="/account", tags=["account"])
 api_router.include_router(apps.router, prefix="/apps", tags=["apps"])
 
 
-clock = Clock()
-app_handler = AppHandler(clock)
+app_handler = AppHandler()
