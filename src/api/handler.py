@@ -28,4 +28,4 @@ class AppHandler:
         self.matrix = RGBMatrix(options=options)
 
         clock = Clock(self.matrix)
-        clock.process()
+        clock.run()

@@ -14,16 +14,6 @@ class Base:
     def run(self):
         pass
 
-    def process(self):
-        try:
-            print("Press CTRL-C to stop sample")
-            self.run()
-        except KeyboardInterrupt:
-            print("Exiting\n")
-            sys.exit(0)
-
-        return True
-
     @staticmethod
     def get_font(name: str):
         font = graphics.Font()
