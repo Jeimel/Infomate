@@ -1,0 +1,2 @@
+class AppHandler:
+    pass
