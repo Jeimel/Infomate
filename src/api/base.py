@@ -1,7 +1,5 @@
-import argparse
 import time
 import sys
-import os
 
 from rgbmatrix import RGBMatrix, graphics
 import config
