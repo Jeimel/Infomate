@@ -1,9 +1,11 @@
+from threading import Thread
+
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from apps.clock.clock import Clock
 import config
 
 
-class AppHandler:
+class AppHandler(Thread):
     def __init__(self):
         options = RGBMatrixOptions()
         options.rows = config.LED_ROWS
