@@ -67,13 +67,15 @@ class Soccer(Base):
             self.text_color,
             league.name.upper(),
         )
+
+        clock = "OVER" if current_event.state == "post" else current_event.clock
         graphics.DrawText(
             self.offscreen_canvas,
             self.small_font,
-            65 - len(current_event.clock) * 4,
+            65 - len(clock) * 4,
             32,
             self.text_color,
-            "OVER" if current_event.state == "post" else current_event.clock,
+            clock,
         )
 
         for competitor in current_event.competitors:
