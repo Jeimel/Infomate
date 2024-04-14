@@ -2,7 +2,7 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions
 
 from asyncio import sleep
 
-from apps.clock.clock import Clock
+from apps.soccer.soccer import Soccer
 import config
 
 
@@ -30,7 +30,7 @@ class AppHandler:
 
         self.matrix = RGBMatrix(options=options)
 
-        self.app = Clock(self.matrix)
+        self.app = Soccer(self.matrix)
 
     async def start(self):
         while True:
