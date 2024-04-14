@@ -73,7 +73,7 @@ class Soccer(Base):
             65 - len(current_event.clock) * 4,
             32,
             self.text_color,
-            current_event.clock,
+            "OVER" if current_event.state == "post" else current_event.clock,
         )
 
         for competitor in current_event.competitors:
@@ -106,7 +106,7 @@ class Soccer(Base):
                 54,
                 text_y,
                 self.text_color,
-                "OVER" if current_event.state == "post" else current_event.clock,
+                competitor.score,
             )
 
         self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
