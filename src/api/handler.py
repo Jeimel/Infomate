@@ -1,11 +1,12 @@
-from threading import Thread
-
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
+
+from asyncio import sleep
+
 from apps.clock.clock import Clock
 import config
 
 
-class AppHandler(Thread):
+class AppHandler:
     def __init__(self):
         options = RGBMatrixOptions()
         options.rows = config.LED_ROWS
@@ -29,5 +30,9 @@ class AppHandler(Thread):
 
         self.matrix = RGBMatrix(options=options)
 
-        clock = Clock(self.matrix)
-        clock.run()
+        self.app = Clock(self.matrix)
+
+    async def start(self):
+        while True:
+            self.app.run()
+            await sleep(self.app.delay / 1_000.0)

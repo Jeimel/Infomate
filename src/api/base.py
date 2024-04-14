@@ -7,9 +7,10 @@ from rgbmatrix import RGBMatrix, graphics
 class Base:
     def __init__(self, matrix: RGBMatrix):
         self.matrix = matrix
+        self.delay = 1000
 
     def msleep(self, value: float):
-        time.sleep(value / 1_000.0)
+        self.delay = value
 
     def run(self):
         pass
