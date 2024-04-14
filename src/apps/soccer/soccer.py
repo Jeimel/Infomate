@@ -8,10 +8,8 @@ from requests import get
 from io import BytesIO
 
 ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard"
-FONT_SMALL = "4x6"
-FONT = "7x13B"
-
-# TODO: Add odds, different leagues
+FONT_SMALL_NAME = "4x6"
+FONT_NAME = "7x13B"
 
 
 @dataclass
@@ -40,11 +38,12 @@ class Soccer(Base):
     def __init__(self, matrix: RGBMatrix):
         super().__init__(matrix)
         self.offscreen_canvas = self.matrix.CreateFrameCanvas()
-        self.small_font = Base.get_font(FONT_SMALL)
-        self.font = Base.get_font(FONT)
+        self.small_font = Base.get_font(FONT_SMALL_NAME)
+        self.font = Base.get_font(FONT_NAME)
+        self.text_color = graphics.Color(255, 255, 255)
         self.index = 0
 
-    def run(self):
+    def run(self) -> bool:
         league = Soccer.get_league()
         if len(league.events) == 0:
             return False
@@ -65,7 +64,7 @@ class Soccer(Base):
             self.small_font,
             0,
             32,
-            graphics.Color(255, 255, 255),
+            self.text_color,
             league.name.upper(),
         )
         graphics.DrawText(
@@ -73,7 +72,7 @@ class Soccer(Base):
             self.small_font,
             65 - len(current_event.clock) * 4,
             32,
-            graphics.Color(255, 255, 255),
+            self.text_color,
             current_event.clock,
         )
 
@@ -85,9 +84,7 @@ class Soccer(Base):
                 for x in range(0, 64):
                     self.offscreen_canvas.SetPixel(x, y, color[0], color[1], color[2])
 
-            logo_transparent = Image.open(BytesIO(get(competitor.logo).content)).resize(
-                (13, 13)
-            )
+            logo_transparent = Image.open(BytesIO(get(competitor.logo).content))
             logo = Image.new("RGBA", logo_transparent.size, color)
             logo.paste(logo_transparent, mask=logo_transparent)
 
@@ -100,7 +97,7 @@ class Soccer(Base):
                 self.font,
                 18,
                 text_y,
-                graphics.Color(255, 255, 255),
+                self.text_color,
                 competitor.name,
             )
             graphics.DrawText(
@@ -108,15 +105,16 @@ class Soccer(Base):
                 self.font,
                 54,
                 text_y,
-                graphics.Color(255, 255, 255),
-                competitor.score,
+                self.text_color,
+                "OVER" if current_event.state == "post" else current_event.clock,
             )
 
         self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
 
-        self.msleep(15 * 1000)
+        self.sleep(15 * 1000)
         return True
 
+    @staticmethod
     def get_league():
         response = get(url=ESPN_URL).json()
         league = League(response["leagues"][0]["abbreviation"], [])
@@ -126,6 +124,7 @@ class Soccer(Base):
 
         return league
 
+    @staticmethod
     def load_event(event_json: dict) -> Event:
         event = Event(
             event_json["status"]["displayClock"],
@@ -138,6 +137,7 @@ class Soccer(Base):
 
         return event
 
+    @staticmethod
     def load_competitor(competitor_json: dict) -> Competitor:
         return Competitor(
             competitor_json["homeAway"] == "home",
@@ -147,7 +147,7 @@ class Soccer(Base):
             competitor_json["team"]["logo"].replace(
                 "https://a.espncdn.com/", "https://a.espncdn.com/combiner/i?img="
             )
-            + "&h=50&w=50",
+            + "&h=13&w=13",
         )
 
     @staticmethod
