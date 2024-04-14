@@ -3,7 +3,7 @@ import yaml
 
 import os
 
-APPS_DIRECTORY = os.getcwd() + "/src/apps"
+APPS_DIRECTORY = os.getcwd() + "/apps"
 
 
 def load_config(path: str):
