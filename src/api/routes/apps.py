@@ -3,7 +3,7 @@ import yaml
 
 import os
 
-APPS_DIRECTORY = os.getcwd() + "/apps"
+APPS_DIRECTORY = os.getcwd() + "/src/apps"
 
 
 def load_config(path: str):
@@ -16,7 +16,7 @@ def load_apps():
 
     apps = []
     for root, _, files in apps_iter:
-        if not (root + ".py" in files and "manifest.yaml" in files):
+        if not "manifest.yaml" in files:
             continue
 
         manifest = load_config(root)
@@ -26,7 +26,6 @@ def load_apps():
 
 
 APPS = load_apps()
-
 
 router = APIRouter()
 
