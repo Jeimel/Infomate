@@ -9,7 +9,7 @@ class Base:
         self.matrix = matrix
         self.delay = 1000
 
-    def msleep(self, value: float):
+    def sleep(self, value: float):
         self.delay = value
 
     def run(self):
