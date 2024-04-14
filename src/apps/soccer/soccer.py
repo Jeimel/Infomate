@@ -53,13 +53,13 @@ class Soccer(Base):
         for i in range(len(league.events)):
             i = (i + self.index) % len(league.events)
             if league.events[i].state == "in":
-                current_event = event
+                current_event = league.events[i]
                 break
-        
+
         self.index = (self.index + 1) % len(league.events)
 
         self.offscreen_canvas.Clear()
-        
+
         graphics.DrawText(
             self.offscreen_canvas,
             self.small_font,
@@ -74,18 +74,20 @@ class Soccer(Base):
             65 - len(current_event.clock) * 4,
             32,
             graphics.Color(255, 255, 255),
-            current_event.clock
+            current_event.clock,
         )
-        
+
         for competitor in current_event.competitors:
             color = Soccer.hex_to_rgb(competitor.color)
-            
+
             y_range = range(0, 13) if competitor.home else range(13, 26)
             for y in y_range:
                 for x in range(0, 64):
-                    self.offscreen_canvas.SetPixel(x, y, color[0], color[1], color[2]);
-            
-            logo_transparent = Image.open(BytesIO(get(competitor.logo).content)).resize((13, 13))
+                    self.offscreen_canvas.SetPixel(x, y, color[0], color[1], color[2])
+
+            logo_transparent = Image.open(BytesIO(get(competitor.logo).content)).resize(
+                (13, 13)
+            )
             logo = Image.new("RGBA", logo_transparent.size, color)
             logo.paste(logo_transparent, mask=logo_transparent)
 
@@ -99,7 +101,7 @@ class Soccer(Base):
                 18,
                 text_y,
                 graphics.Color(255, 255, 255),
-                competitor.name
+                competitor.name,
             )
             graphics.DrawText(
                 self.offscreen_canvas,
@@ -107,7 +109,7 @@ class Soccer(Base):
                 54,
                 text_y,
                 graphics.Color(255, 255, 255),
-                competitor.score
+                competitor.score,
             )
 
         self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
@@ -142,9 +144,12 @@ class Soccer(Base):
             competitor_json["score"],
             competitor_json["team"]["abbreviation"],
             competitor_json["team"]["color"],
-            competitor_json["team"]["logo"].replace("https://a.espncdn.com/", "https://a.espncdn.com/combiner/i?img=") + "&h=50&w=50",
+            competitor_json["team"]["logo"].replace(
+                "https://a.espncdn.com/", "https://a.espncdn.com/combiner/i?img="
+            )
+            + "&h=50&w=50",
         )
 
     @staticmethod
     def hex_to_rgb(hex: str) -> tuple:
-        return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+        return tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4))
