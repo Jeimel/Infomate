@@ -91,7 +91,9 @@ class Soccer(Base):
             logo.paste(logo_transparent, mask=logo_transparent)
 
             image_y = 0 if competitor.home else 13
-            self.offscreen_canvas.SetImage(logo.convert("RGB"), 0, image_y)
+            self.offscreen_canvas.SetImage(
+                logo.convert("RGB").resize((13, 13)), 0, image_y
+            )
 
             text_y = 11 if competitor.home else 24
             graphics.DrawText(
@@ -149,7 +151,7 @@ class Soccer(Base):
             competitor_json["team"]["logo"].replace(
                 "https://a.espncdn.com/", "https://a.espncdn.com/combiner/i?img="
             )
-            + "&h=13&w=13",
+            + "&h=50&w=50",
         )
 
     @staticmethod
