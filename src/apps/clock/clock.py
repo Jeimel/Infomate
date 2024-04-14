@@ -25,7 +25,7 @@ class Clock(Base):
     def run(self):
         self.offscreen_canvas.Clear()
         self.offscreen_canvas.SetImage(self.image, IMAGE_X, IMAGE_Y)
-        self.graphics.DrawText(
+        graphics.DrawText(
             self.offscreen_canvas,
             self.font,
             TEXT_X,
