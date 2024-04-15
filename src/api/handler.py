@@ -29,8 +29,8 @@ class AppHandler:
         options.drop_privileges = config.LED_NO_DROP_PRIVILEGES
 
         self.matrix = RGBMatrix(options=options)
-
-        self.app = Soccer(self.matrix)
+        from apps.dvd.dvd import DVD
+        self.app = DVD(self.matrix)
 
     async def start(self):
         while True:
