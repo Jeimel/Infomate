@@ -14,9 +14,7 @@ class DVD(Base):
     def __init__(self, matrix: RGBMatrix):
         super().__init__(matrix)
         self.offscreen_canvas = self.matrix.CreateFrameCanvas()
-        self.dvd_logo = Image.open(BytesIO(b64decode(DVD_LOGO.encode()))).convert(
-            "RGBA"
-        )
+        self.dvd_logo = Image.open(BytesIO(b64decode(DVD_LOGO.encode())))
         self.x = randint(0, 64)
         self.y = randint(0, 32)
 
@@ -30,8 +28,8 @@ class DVD(Base):
 
     def get_logo(self) -> Image:
         data = np.array(self.dvd_logo)
-        red, green, blue, _ = data.T
-        black_areas = (red == 0) & (blue == 0) & (green == 0)
+        _, _, _, alpha = data.T
+        black_areas = alpha == 0
         data[..., :-1][black_areas.T] = (255, 255, 255)
 
         return Image.fromarray(data).convert("RGB")
