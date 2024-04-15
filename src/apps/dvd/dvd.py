@@ -11,13 +11,13 @@ DVD_LOGO = "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAJCAYAAADtj3ZXAAAAQUlEQVQokWNgwA3+I2Fc
 DVD_WIDTH = 15
 DVD_HEIGHT = 9
 COLORS = [
-    "#0ef",  # light blue
-    "#f70",  # orange
-    "#02f",  # dark blue
-    "#fe0",  # yellow
-    "#f20",  # red
-    "#f08",  # pink
-    "#b0f",  # purple
+    (0, 238, 255),
+    (255, 119, 0),
+    (0, 34, 255),
+    (255, 238, 0),
+    (255, 34, 0),
+    (255, 0, 136),
+    (187, 0, 255),
 ]
 
 
@@ -71,7 +71,3 @@ class DVD(Base):
 
     def change_color(self):
         self.color_index = (self.color_index + 1) % len(COLORS)
-
-    @staticmethod
-    def hex_to_rgb(hex: str) -> tuple:
-        return tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4))
