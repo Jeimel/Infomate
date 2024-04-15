@@ -29,14 +29,10 @@ class DVD(Base):
         self.color_index = 0
         self.x = randint(0, 64)
         self.y = randint(0, 32)
-        self.vel_x = 3
-        self.vel_y = 3
+        self.vel_x = 2
+        self.vel_y = 2
 
     def run(self) -> bool:
-        self.offscreen_canvas.Clear()
-        self.offscreen_canvas.SetImage(self.get_logo(), self.x, self.y)
-        self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
-
         self.x += self.vel_x
         self.y += self.vel_y
 
@@ -58,7 +54,11 @@ class DVD(Base):
             self.y = 0
             self.change_color()
 
-        self.sleep(250)
+        self.offscreen_canvas.Clear()
+        self.offscreen_canvas.SetImage(self.get_logo(), self.x, self.y)
+        self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
+
+        self.sleep(150)
         return True
 
     def get_logo(self) -> Image:
