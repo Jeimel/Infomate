@@ -1,5 +1,5 @@
 from api.base import Base
-from rgbmatrix import RGBMatrix, graphics
+from rgbmatrix import FrameCanvas, graphics
 
 from PIL import Image
 from datetime import datetime
@@ -11,27 +11,26 @@ FONT_NAME = "6x10"
 
 
 class Clock(Base):
-    def __init__(self, matrix: RGBMatrix):
-        super().__init__(matrix)
-        self.offscreen_canvas = self.matrix.CreateFrameCanvas()
+    def __init__(self, canvas: FrameCanvas):
+        super().__init__(canvas)
         self.font = Base.get_font(FONT_NAME)
         self.textColor = graphics.Color(255, 255, 255)
         self.image = Image.open(BytesIO(b64decode(IMAGE.encode()))).convert("RGB")
 
-    def run(self):
-        self.offscreen_canvas.Clear()
-        self.offscreen_canvas.SetImage(self.image, 4, 5)
+    def run(self) -> bool:
+        self.canvas.Clear()
+        self.canvas.SetImage(self.image, 4, 5)
         graphics.DrawText(
-            self.offscreen_canvas,
+            self.canvas,
             self.font,
             31,
             19,
             self.textColor,
             Clock.get_time_formatted(),
         )
-        self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
 
         self.sleep((60 - datetime.now().second) * 1000)
+        return True
 
     @staticmethod
     def get_time_formatted() -> str:
