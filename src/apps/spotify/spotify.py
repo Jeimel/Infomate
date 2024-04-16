@@ -1,12 +1,12 @@
 from api.base import Base
-from rgbmatrix import RGBMatrix
+from rgbmatrix import FrameCanvas
 
 from argparse import ArgumentParser
 
 
 class Spotify(Base):
-    def __init__(self, matrix: RGBMatrix):
-        super().__init__(matrix)
+    def __init__(self, canvas: FrameCanvas):
+        super().__init__(canvas)
 
         self.parser = ArgumentParser()
         self.parser.add_argument(
