@@ -1,7 +1,7 @@
 import time
 import sys
 
-from rgbmatrix import FrameCanvas, graphics, Font
+from rgbmatrix import FrameCanvas, graphics
 
 
 class Base:
@@ -16,7 +16,7 @@ class Base:
         pass
 
     @staticmethod
-    def get_font(name: str) -> Font:
+    def get_font(name: str) -> graphics.Font:
         font = graphics.Font()
         font.LoadFont(f"../rpi-rgb-led-matrix/fonts/{name}.bdf")
 
