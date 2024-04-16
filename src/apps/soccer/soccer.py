@@ -1,5 +1,5 @@
 from api.base import Base
-from rgbmatrix import RGBMatrix, graphics
+from rgbmatrix import FrameCanvas, graphics
 
 from PIL import Image
 from dataclasses import dataclass
@@ -35,9 +35,9 @@ class League:
 
 
 class Soccer(Base):
-    def __init__(self, matrix: RGBMatrix):
-        super().__init__(matrix)
-        self.offscreen_canvas = self.matrix.CreateFrameCanvas()
+
+    def __init__(self, canvas: FrameCanvas):
+        super().__init__(canvas)
         self.small_font = Base.get_font(FONT_SMALL_NAME)
         self.font = Base.get_font(FONT_NAME)
         self.text_color = graphics.Color(255, 255, 255)
@@ -57,10 +57,8 @@ class Soccer(Base):
 
         self.index = (self.index + 1) % len(league.events)
 
-        self.offscreen_canvas.Clear()
-
         graphics.DrawText(
-            self.offscreen_canvas,
+            self.canvas,
             self.small_font,
             0,
             32,
@@ -70,7 +68,7 @@ class Soccer(Base):
 
         clock = "OVER" if current_event.state == "post" else current_event.clock
         graphics.DrawText(
-            self.offscreen_canvas,
+            self.canvas,
             self.small_font,
             65 - len(clock) * 4,
             32,
@@ -84,20 +82,18 @@ class Soccer(Base):
             y_range = range(0, 13) if competitor.home else range(13, 26)
             for y in y_range:
                 for x in range(0, 64):
-                    self.offscreen_canvas.SetPixel(x, y, color[0], color[1], color[2])
+                    self.canvas.SetPixel(x, y, color[0], color[1], color[2])
 
             logo_transparent = Image.open(BytesIO(get(competitor.logo).content))
             logo = Image.new("RGBA", logo_transparent.size, color)
             logo.paste(logo_transparent, mask=logo_transparent)
 
             image_y = 0 if competitor.home else 13
-            self.offscreen_canvas.SetImage(
-                logo.convert("RGB").resize((13, 13)), 0, image_y
-            )
+            self.canvas.SetImage(logo.convert("RGB").resize((13, 13)), 0, image_y)
 
             text_y = 11 if competitor.home else 24
             graphics.DrawText(
-                self.offscreen_canvas,
+                self.canvas,
                 self.font,
                 18,
                 text_y,
@@ -105,15 +101,13 @@ class Soccer(Base):
                 competitor.name,
             )
             graphics.DrawText(
-                self.offscreen_canvas,
+                self.canvas,
                 self.font,
                 54,
                 text_y,
                 self.text_color,
                 competitor.score,
             )
-
-        self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
 
         self.sleep(15 * 1000)
         return True
