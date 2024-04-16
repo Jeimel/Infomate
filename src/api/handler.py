@@ -29,9 +29,14 @@ class AppHandler:
 
         self.matrix = RGBMatrix(options=options)
         self.app = Clock(self.matrix.CreateFrameCanvas())
+        self.next = None
 
     async def start(self):
         while True:
+            if self.next:
+                self.app = self.next(self.app.canvas)
+                self.next = None
+
             self.app.canvas.Clear()
             self.app.run()
             self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
