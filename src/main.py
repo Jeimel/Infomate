@@ -1,9 +1,10 @@
-import uvicorn
+from uvicorn import run
 from fastapi import FastAPI
-
 from contextlib import asynccontextmanager
 from asyncio import create_task
 from sys import exit
+from os import chdir
+from pathlib import Path
 
 from api.main import api_router
 from api.handler import AppHandler
@@ -24,7 +25,8 @@ app.include_router(api_router, prefix=API_ROUTE)
 
 
 if __name__ == "__main__":
+    chdir(Path(__file__).parent.resolve())
     try:
-        uvicorn.run(app, host="127.0.0.1", port=8000)
+        run(app, host="0.0.0.0", port=8000)
     except KeyboardInterrupt:
         exit(1)
