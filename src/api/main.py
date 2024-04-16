@@ -1,7 +1,4 @@
-import sys
-
 from fastapi import APIRouter
-
 
 from api.routes import account, apps
 

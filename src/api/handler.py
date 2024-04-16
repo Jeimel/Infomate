@@ -1,10 +1,6 @@
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
-
 from asyncio import sleep
 
-from apps.soccer.soccer import Soccer
-from apps.dvd.dvd import DVD
-from apps.spotify.spotify import Spotify
+from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from apps.clock.clock import Clock
 import config
 
@@ -32,7 +28,7 @@ class AppHandler:
         options.drop_privileges = config.LED_NO_DROP_PRIVILEGES
 
         self.matrix = RGBMatrix(options=options)
-        self.app = DVD(self.matrix.CreateFrameCanvas())
+        self.app = Clock(self.matrix.CreateFrameCanvas())
 
     async def start(self):
         while True:

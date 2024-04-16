@@ -8,7 +8,7 @@ from sys import exit
 from api.main import api_router
 from api.handler import AppHandler
 
-API_ROUTE = "/api/v0"
+API_ROUTE = "/api/"
 
 
 @asynccontextmanager
