@@ -1,5 +1,5 @@
 from api.base import Base
-from rgbmatrix import RGBMatrix
+from rgbmatrix import FrameCanvas
 
 from PIL import Image
 from io import BytesIO
@@ -22,9 +22,8 @@ COLORS = [
 
 
 class DVD(Base):
-    def __init__(self, matrix: RGBMatrix):
-        super().__init__(matrix)
-        self.offscreen_canvas = self.matrix.CreateFrameCanvas()
+    def __init__(self, canvas: FrameCanvas):
+        super().__init__(canvas)
         self.dvd_logo = Image.open(BytesIO(b64decode(DVD_LOGO.encode())))
         self.color_index = 0
         self.x = randint(0, 64)
@@ -54,9 +53,7 @@ class DVD(Base):
             self.y = 0
             self.change_color()
 
-        self.offscreen_canvas.Clear()
-        self.offscreen_canvas.SetImage(self.get_logo(), self.x, self.y)
-        self.offscreen_canvas = self.matrix.SwapOnVSync(self.offscreen_canvas)
+        self.canvas.SetImage(self.get_logo(), self.x, self.y)
 
         self.sleep(150)
         return True
