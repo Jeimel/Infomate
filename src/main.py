@@ -9,7 +9,8 @@ from pathlib import Path
 from api.main import api_router
 from api.handler import AppHandler
 
-API_ROUTE = "/api/"
+
+API_ROUTE = "/api"
 
 
 @asynccontextmanager
