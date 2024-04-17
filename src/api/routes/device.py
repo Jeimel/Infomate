@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from socket import gethostname
 from subprocess import Popen, PIPE
 
@@ -16,4 +16,11 @@ def device():
 @router.post("/update")
 def update():
     process = Popen(["git", "pull"], stdout=PIPE)
-    return process.communicate()[0]
+
+    try:
+        output = process.communicate(timeout=10)[0]
+        process.kill()
+
+        return output
+    except:
+        raise HTTPException(status_code=500, detail="Can't update repository.")
