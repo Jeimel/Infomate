@@ -75,7 +75,7 @@ class Soccer(Base):
             "OVER"
             if current_event.state == "post"
             else (
-                current_event.date.strftime("%b,%H:%M")
+                current_event.date.strftime("%a %H:%M")
                 if current_event.state == "pre"
                 else current_event.clock
             )
