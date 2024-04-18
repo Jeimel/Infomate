@@ -19,7 +19,7 @@ class Competitor:
     home: bool
     score: str
     name: str
-    color: graphics.Color
+    color: tuple[int, int, int]
     text_color: graphics.Color
     logo: str
 
@@ -161,7 +161,7 @@ class Soccer(Base):
             competitor_json["homeAway"] == "home",
             competitor_json["score"],
             competitor_json["team"]["abbreviation"],
-            graphics.Color(color[0], color[1], color[2]),
+            (color[0], color[1], color[2]),
             graphics.Color(text_color[0], text_color[1], text_color[2]),
             competitor_json["team"]["logo"].replace(
                 "https://a.espncdn.com/", "https://a.espncdn.com/combiner/i?img="
