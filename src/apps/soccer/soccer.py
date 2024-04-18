@@ -143,7 +143,7 @@ class Soccer(Base):
         event = Event(
             event_json["status"]["displayClock"],
             event_json["status"]["type"]["state"],
-            datetime(event_json["date"], DATE_FORMAT),
+            datetime.strptime(event_json["date"], DATE_FORMAT),
             [],
         )
 
