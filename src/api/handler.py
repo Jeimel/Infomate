@@ -1,4 +1,5 @@
 from asyncio import sleep, create_task, CancelledError
+from sys import exit
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from apps.clock.clock import Clock
@@ -45,8 +46,10 @@ class AppHandler:
 
             try:
                 await self.timer
-            except CancelledError or KeyboardInterrupt:
+            except CancelledError:
                 continue
+            except KeyboardInterrupt:
+                exit(0)
 
     async def delay(self):
         try:
