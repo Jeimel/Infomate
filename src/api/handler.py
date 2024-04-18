@@ -31,10 +31,11 @@ class AppHandler:
         self.matrix = RGBMatrix(options=options)
         self.app = Clock(self.matrix.CreateFrameCanvas())
         self.next = None
-        self.timer = None
+        self.sleeper = None
+        self.running = True
 
     async def start(self):
-        while True:
+        while self.running:
             if self.next:
                 self.app = self.next(self.app.canvas)
                 self.next = None
@@ -42,10 +43,10 @@ class AppHandler:
             self.app.canvas.Clear()
             self.app.run()
             self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
-            self.timer = create_task(self.delay())
+            self.sleeper = create_task(self.delay())
 
             try:
-                await self.timer
+                await self.sleeper
             except CancelledError:
                 continue
 
@@ -57,5 +58,5 @@ class AppHandler:
 
     def set_next(self, next: type):
         self.next = next
-        if self.timer:
-            self.timer.cancel()
+        if self.sleeper:
+            self.sleeper.cancel()

@@ -23,6 +23,5 @@ if __name__ == "__main__":
     try:
         run(app, host="0.0.0.0", port=8000)
     except KeyboardInterrupt:
-        if app_handler.timer:
-            app_handler.timer.close()
+        app_handler.running = False
         exit(0)
