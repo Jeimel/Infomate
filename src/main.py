@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from sys import exit
 
 from api.main import api_router
-from api.routes.apps import lifespan
+from api.routes.apps import lifespan, app_handler
 
 
 API_ROUTE = "/api"
@@ -23,4 +23,6 @@ if __name__ == "__main__":
     try:
         run(app, host="0.0.0.0", port=8000)
     except KeyboardInterrupt:
-        exit(1)
+        if app_handler.timer:
+            app_handler.timer.close()
+        exit(0)

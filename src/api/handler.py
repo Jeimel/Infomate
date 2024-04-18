@@ -48,8 +48,6 @@ class AppHandler:
                 await self.timer
             except CancelledError:
                 continue
-            except KeyboardInterrupt:
-                exit(0)
 
     async def delay(self):
         try:
