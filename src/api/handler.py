@@ -1,4 +1,4 @@
-from asyncio import sleep, create_task
+from asyncio import sleep, create_task, CancelledError
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from apps.clock.clock import Clock
@@ -43,10 +43,16 @@ class AppHandler:
             self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
             self.timer = create_task(self.delay())
 
-            await self.timer
+            try:
+                await self.timer
+            except CancelledError:
+                continue
 
     async def delay(self):
-        await sleep(self.app.delay / 1_000.0)
+        try:
+            await sleep(self.app.delay / 1_000.0)
+        except CancelledError:
+            raise
 
     def set_next(self, next: type):
         self.next = next
