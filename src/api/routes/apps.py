@@ -65,7 +65,7 @@ def deploy(appID: str) -> bool:
     try:
         path, name = APP_PATHS[appID]
         module = import_module(path)
-        app_handler.next = getattr(module, name)
+        app_handler.set_next(getattr(module, name))
     except:
         raise HTTPException(status_code=500, detail="Can't load app.")
 
