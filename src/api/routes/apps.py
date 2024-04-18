@@ -50,6 +50,7 @@ app_handler = AppHandler()
 async def lifespan(_: FastAPI):
     create_task(app_handler.start())
     yield
+    app_handler.running = False
 
 
 @router.get("/")
