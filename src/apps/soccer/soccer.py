@@ -12,6 +12,7 @@ DATE_FORMAT = "%Y-%m-%dT%H:%MZ"
 ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard"
 FONT_SMALL_NAME = "4x6"
 FONT_NAME = "7x13B"
+LEAGUE_ABBREVIATION = {"GER.1": "Bund"}
 
 
 @dataclass
@@ -74,7 +75,7 @@ class Soccer(Base):
             "OVER"
             if current_event.state == "post"
             else (
-                current_event.date.strftime("%b, %H:%M")
+                current_event.date.strftime("%b,%H:%M")
                 if current_event.state == "pre"
                 else current_event.clock
             )
@@ -131,7 +132,10 @@ class Soccer(Base):
     @staticmethod
     def get_league():
         response = get(url=ESPN_URL).json()
-        league = League(response["leagues"][0]["abbreviation"], [])
+        name = response["leagues"][0]["midsizeName"]
+        if name in LEAGUE_ABBREVIATION:
+            name = LEAGUE_ABBREVIATION["name"]
+        league = League(name, [])
 
         for event_json in response["events"]:
             league.events.append(Soccer.load_event(event_json))
