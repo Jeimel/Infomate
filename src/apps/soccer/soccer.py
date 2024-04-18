@@ -101,7 +101,7 @@ class Soccer(Base):
                     )
 
             logo_transparent = Image.open(BytesIO(get(competitor.logo).content))
-            logo = Image.new("RGBA", logo_transparent.size, competitor.co)
+            logo = Image.new("RGBA", logo_transparent.size, competitor.color)
             logo.paste(logo_transparent, mask=logo_transparent)
 
             image_y = 0 if competitor.home else 13
