@@ -134,7 +134,7 @@ class Soccer(Base):
         response = get(url=ESPN_URL).json()
         name = response["leagues"][0]["midsizeName"]
         if name in LEAGUE_ABBREVIATION:
-            name = LEAGUE_ABBREVIATION["name"]
+            name = LEAGUE_ABBREVIATION[name]
         league = League(name, [])
 
         for event_json in response["events"]:
