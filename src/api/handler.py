@@ -65,3 +65,5 @@ class AppHandler:
         self.matrix.brightness = brightness
         self.app.canvas.brightness = brightness
         self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
+
+        self.sleeper.cancel()
