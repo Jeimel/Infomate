@@ -29,8 +29,11 @@ def update():
 
 
 @router.post("/brightness")
-def brightness(
-    brightness: Annotated[int, Path(title="The ID of the item to get", ge=1, le=100)]
-):
+def brightness(brightness: int):
+    if brightness < 1 or brightness > 100:
+        raise HTTPException(
+            status_code=422, detail="Brightness must be in range [1, 100]."
+        )
+
     app_handler.matrix.brightness = brightness
     return True
