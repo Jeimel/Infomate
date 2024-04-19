@@ -60,3 +60,8 @@ class AppHandler:
         self.next = next
         if self.sleeper:
             self.sleeper.cancel()
+
+    def update_brightness(self, brightness: int):
+        self.matrix.brightness = brightness
+        self.app.canvas.brightness = brightness
+        self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)

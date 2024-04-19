@@ -34,6 +34,5 @@ def brightness(brightness: int):
             status_code=422, detail="Brightness must be in range [1, 100]."
         )
 
-    app_handler.matrix.brightness = brightness
-    app_handler.app.canvas.brightness = brightness
+    app_handler.update_brightness(brightness)
     return True
