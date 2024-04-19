@@ -3,7 +3,6 @@ from socket import gethostname
 from subprocess import Popen, PIPE
 from typing import Annotated
 
-from config import LED_BRIGHTNESS
 from api.routes.apps import app_handler
 
 
@@ -12,7 +11,7 @@ router = APIRouter()
 
 @router.get("/")
 def device():
-    return {"name": gethostname(), "brightness": LED_BRIGHTNESS}
+    return {"name": gethostname(), "brightness": app_handler.matrix.brightness}
 
 
 @router.post("/update")
@@ -36,4 +35,5 @@ def brightness(brightness: int):
         )
 
     app_handler.matrix.brightness = brightness
+    app_handler.app.canvas.brightness = brightness
     return True
