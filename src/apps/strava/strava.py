@@ -7,6 +7,7 @@ from time import strftime, gmtime, mktime
 from PIL import Image
 from io import BytesIO
 from base64 import b64decode
+from os import getenv, environ
 
 STRAVA_URL = "https://www.strava.com/api/v3/athlete/activities"
 AUTH_URL = "https://www.strava.com/api/v3/oauth/token"
@@ -28,8 +29,55 @@ class Strava(Base):
             "RGB"
         )
         self.white = graphics.Color(255, 255, 255)
+        self.client_id = getenv("CLIENT_ID")
+        self.client_secret = getenv("CLIENT_SECRET")
+
+        code = getenv("AUTHORIZATION_CODE")
+        if code:
+            self._exchange_token(code)
+            del environ["AUTHORIZATION_CODE"], code
+
+        self.expires_at = int(getenv("EXPIRES_AT", default="0"))
+        self.refresh_token = getenv("REFRESH_TOKEN")
+        if self._is_expired():
+            self._refresh_token()
+            return
+
+        self.access_token = getenv("ACCESS_TOKEN")
+
+    def _is_expired(self) -> bool:
+        return self.expires_at <= int(datetime.now().timestamp())
+
+    def _exchange_token(self, code: str) -> None:
+        self._auth_request({
+            "code": code,
+            "grant_type": "authorization_code",
+        })
+
+    def _refresh_token(self) -> None:
+        self._auth_request({
+            "grant_type": "refresh_token",
+            "refresh_token": self.refresh_token,
+        })
+
+        self.expires_at = int(getenv("EXPIRES_AT", default="0"))
+        self.refresh_token = getenv("REFRESH_TOKEN")
+        self.access_token = getenv("ACCESS_TOKEN")
+
+    def _auth_request(self, data: dict) -> None:
+        response = post(AUTH_URL, data={
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+        }.update(data)).json()
+
+        environ["ACCESS_TOKEN"] = response["access_token"]
+        environ["REFRESH_TOKEN"] = response["refresh_token"]
+        environ["EXPIRES_AT"] = response["expires_at"]
 
     def run(self) -> bool:
+        if self._is_expired():
+            self._refresh_token()
+
         now = datetime.now()
         start_of_week = (now - timedelta(days=now.weekday())).replace(
             hour=0, minute=0, second=0, microsecond=0
@@ -44,7 +92,7 @@ class Strava(Base):
             },
             headers={
                 "accept": "application/json",
-                "authorization": "Bearer ",
+                "authorization": "Bearer {}".format(self.access_token),
             },
         ).json()
 
@@ -111,4 +159,5 @@ class Strava(Base):
             "AUTHORIZATION_CODE",
             "REFRESH_TOKEN",
             "ACCESS_TOKEN",
+            "EXPIRES_AT"
         ]
