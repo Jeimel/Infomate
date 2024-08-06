@@ -40,7 +40,6 @@ class League:
 
 
 class Soccer(Base):
-
     def __init__(self, canvas: FrameCanvas):
         super().__init__(canvas)
         self.small_font = Base.get_font(FONT_SMALL_NAME)
