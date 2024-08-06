@@ -1,7 +1,6 @@
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, HTTPException
 from socket import gethostname
 from subprocess import Popen, PIPE
-from typing import Annotated
 
 from api.routes.apps import app_handler
 

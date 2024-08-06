@@ -1,1 +1,3 @@
 __pycache__/
+# Private database files
+data

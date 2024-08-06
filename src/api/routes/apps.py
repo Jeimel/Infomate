@@ -71,3 +71,16 @@ def deploy(appID: str) -> bool:
         raise HTTPException(status_code=500, detail="Can't load app.")
 
     return True
+
+@router.post("/{appID}/data")
+def data(appID: str, name: str, value: str) -> bool:
+    if appID not in APP_PATHS:
+        raise HTTPException(status_code=404, detail="App not found.")
+
+    try:
+        path, name = APP_PATHS[appID]
+        module = import_module(path)
+        app = getattr(module, name)
+    except:
+        raise HTTPException(status_code=500, detail="Can't load app.")
+    

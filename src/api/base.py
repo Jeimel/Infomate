@@ -1,6 +1,3 @@
-import time
-import sys
-
 from rgbmatrix import FrameCanvas, graphics
 
 
@@ -14,6 +11,14 @@ class Base:
 
     def run(self) -> bool:
         pass
+    
+    @staticmethod
+    def database(self) -> bool:
+        return False
+    
+    @staticmethod
+    def parameter(self) -> dict:
+        return {}
 
     @staticmethod
     def get_font(name: str) -> graphics.Font:
