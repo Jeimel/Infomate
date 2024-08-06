@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from yaml import safe_load
-from os import walk, getcwd
+from os import walk, getcwd, getenv, environ
 from importlib import import_module
 from contextlib import asynccontextmanager
 from asyncio import create_task
@@ -22,7 +22,7 @@ def load_apps():
     manifests = []
     paths = {}
     for root, _, files in apps_iter:
-        if len(files) != 2 or "manifest.yaml" != files[0]:
+        if len(files) != 2 or "manifest.yaml" not in files:
             continue
 
         manifest = load_config(root)
@@ -64,13 +64,15 @@ def deploy(appID: str) -> bool:
         raise HTTPException(status_code=404, detail="App not found.")
 
     try:
-        path, name = APP_PATHS[appID]
+        path, app_name = APP_PATHS[appID]
         module = import_module(path)
-        app_handler.set_next(getattr(module, name))
-    except:
+        app_handler.set_next(getattr(module, app_name), app_name)
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Can't load app.")
 
     return True
+
 
 @router.post("/{appID}/data")
 def data(appID: str, name: str, value: str) -> bool:
@@ -78,9 +80,23 @@ def data(appID: str, name: str, value: str) -> bool:
         raise HTTPException(status_code=404, detail="App not found.")
 
     try:
-        path, name = APP_PATHS[appID]
+        path, app_name = APP_PATHS[appID]
         module = import_module(path)
-        app = getattr(module, name)
+        app = getattr(module, app_name)
+
+        env = app.env()
+        variables = app.variables()
     except:
         raise HTTPException(status_code=500, detail="Can't load app.")
-    
+
+    if not env:
+        raise HTTPException(status_code=404, detail="App doesn't support variables.")
+
+    if name not in variables:
+        raise HTTPException(
+            status_code=404, detail="Provided variable isn't supported."
+        )
+
+    environ["{}_{}".format(app_name, name)] = value
+
+    return True

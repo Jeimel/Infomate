@@ -1,5 +1,4 @@
 from asyncio import sleep, create_task, CancelledError
-from sys import exit
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from apps.clock.clock import Clock

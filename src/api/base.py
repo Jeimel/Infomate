@@ -13,11 +13,11 @@ class Base:
         pass
     
     @staticmethod
-    def database(self) -> bool:
+    def env(self) -> bool:
         return False
     
     @staticmethod
-    def parameter(self) -> dict:
+    def variables(self) -> dict:
         return {}
 
     @staticmethod
