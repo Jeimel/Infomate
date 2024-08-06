@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Path
+from typing_extensions import Annotated
 from socket import gethostname
 from subprocess import Popen, PIPE
 
@@ -27,11 +28,6 @@ def update():
 
 
 @router.post("/brightness")
-def brightness(brightness: int):
-    if brightness < 1 or brightness > 100:
-        raise HTTPException(
-            status_code=422, detail="Brightness must be in range [1, 100]."
-        )
-
+def brightness(brightness: Annotated[int, Path(title="The ID of the item to get", gt=0, le=100)],):
     app_handler.update_brightness(brightness)
     return True

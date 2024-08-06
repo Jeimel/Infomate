@@ -10,15 +10,15 @@ class Base:
         self.delay = value
 
     def run(self) -> bool:
-        pass
-    
-    @staticmethod
-    def env(self) -> bool:
         return False
-    
+
     @staticmethod
-    def variables(self) -> dict:
-        return {}
+    def env() -> bool:
+        return False
+
+    @staticmethod
+    def variables() -> list:
+        return []
 
     @staticmethod
     def get_font(name: str) -> graphics.Font:

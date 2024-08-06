@@ -58,29 +58,28 @@ def apps() -> dict:
     return {"Apps": APP_MANIFESTS}
 
 
-@router.post("/{appID}/deploy")
-def deploy(appID: str) -> bool:
-    if appID not in APP_PATHS:
+@router.post("/{app_id}/deploy")
+def deploy(app_id: str) -> bool:
+    if app_id not in APP_PATHS:
         raise HTTPException(status_code=404, detail="App not found.")
 
     try:
-        path, app_name = APP_PATHS[appID]
+        path, app_name = APP_PATHS[app_id]
         module = import_module(path)
-        app_handler.set_next(getattr(module, app_name), app_name)
+        app_handler.set_next(getattr(module, app_name))
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Can't load app.")
 
     return True
 
-
-@router.post("/{appID}/data")
-def data(appID: str, name: str, value: str) -> bool:
-    if appID not in APP_PATHS:
+@router.post("/{app_id}/variables")
+def data(app_id: str, name: str, value: str) -> bool:
+    if app_id not in APP_PATHS:
         raise HTTPException(status_code=404, detail="App not found.")
 
     try:
-        path, app_name = APP_PATHS[appID]
+        path, app_name = APP_PATHS[app_id]
         module = import_module(path)
         app = getattr(module, app_name)
 
