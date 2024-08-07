@@ -33,15 +33,21 @@ class AppHandler:
         self.sleeper = None
         self.running = True
 
-    async def start(self):
+    async def start(self) -> None:
         while self.running:
-            if self.next:
-                self.app = self.next(self.app.canvas)
+            try:
+                if self.next:
+                    self.app = self.next(self.app.canvas)
+                    self.next = None
+
+                self.app.canvas.Clear()
+                self.app.run()
+                self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
+            except Exception as e:
+                print(e)
+                self.app = Clock(self.app.canvas)
                 self.next = None
 
-            self.app.canvas.Clear()
-            self.app.run()
-            self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
             self.sleeper = create_task(self.delay())
 
             try:
@@ -55,14 +61,15 @@ class AppHandler:
         except CancelledError:
             raise
 
-    def set_next(self, next: type):
+    async def set_next(self, next: type) -> None:
         self.next = next
         if self.sleeper:
             self.sleeper.cancel()
 
-    def update_brightness(self, brightness: int):
+    def update_brightness(self, brightness: int) -> None:
         self.matrix.brightness = brightness
         self.app.canvas.brightness = brightness
         self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
 
-        self.sleeper.cancel()
+        if self.sleeper:
+            self.sleeper.cancel()
