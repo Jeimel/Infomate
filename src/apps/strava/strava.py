@@ -35,10 +35,9 @@ class Strava(Base):
         self.client_id = getenv("STRAVA_CLIENT_ID")
         self.client_secret = getenv("STRAVA_CLIENT_SECRET")
 
-        code = getenv("AUTHORIZATION_CODE")
-        if code:
+        code = getenv("STRAVA_AUTHORIZATION_CODE")
+        if code is not None and not code:
             self._exchange_token(code)
-            del environ["STRAVA_AUTHORIZATION_CODE"], code
 
         self.expires_at = int(getenv("STRAVA_EXPIRES_AT", default="0"))
         self.refresh_token = getenv("STRAVA_REFRESH_TOKEN")
@@ -56,6 +55,7 @@ class Strava(Base):
             "code": code,
             "grant_type": "authorization_code",
         })
+        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_ACCESS_TOKEN", value_to_set="")
 
     def _refresh_token(self) -> None:
         self._auth_request(REFRESH_URL, {
@@ -78,7 +78,7 @@ class Strava(Base):
 
         set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_ACCESS_TOKEN", value_to_set=response["access_token"])
         set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_REFRESH_TOKEN", value_to_set=response["refresh_token"])
-        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_EXPIRES_AT", value_to_set=response["expires_at"])
+        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_EXPIRES_AT", value_to_set=str(response["expires_at"]))
 
     def run(self) -> bool:
         if self._is_expired():
@@ -102,11 +102,12 @@ class Strava(Base):
             },
         ).json()
 
-        num_activities = len(response)
+        num_activities = 0
         distance_sum = 0.0
         time_sum = 0.0
         for activity in response:
             if activity["type"] == "Run":
+                num_activities += 1
                 distance_sum += activity["distance"]
                 time_sum += activity["moving_time"]
 
@@ -124,7 +125,7 @@ class Strava(Base):
         graphics.DrawText(
             self.canvas,
             self.font,
-            10,
+            11,
             15,
             self.white,
             "{} run".format(num_activities) + ("s" if num_activities != 1 else ""),
@@ -134,7 +135,7 @@ class Strava(Base):
         graphics.DrawText(
             self.canvas,
             self.font,
-            10,
+            11,
             23,
             self.white,
             "{:.1f} km".format(distance_sum / 1000),
@@ -144,7 +145,7 @@ class Strava(Base):
         graphics.DrawText(
             self.canvas,
             self.font,
-            10,
+            11,
             31,
             self.white,
             strftime("%-Hh %-Mm", gmtime(time_sum)),
