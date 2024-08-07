@@ -16,7 +16,7 @@ class Photo(Base):
         self.image = (
             Image.open(
                 BytesIO(
-                    b64decode(getenv("Photo_PHOTO", default=DEFAULT_IMAGE).encode())
+                    b64decode(getenv("PHOTO_PHOTO", default=DEFAULT_IMAGE).encode())
                 )
             )
             .convert("RGB")
