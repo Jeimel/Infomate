@@ -9,7 +9,7 @@ from sys import exit
 from dotenv import load_dotenv
 
 from api.main import api_router
-from api.routes.apps import lifespan
+from api.routes.apps import lifespan, ENV_PATH
 
 
 API_ROUTE = "/api"
@@ -20,11 +20,11 @@ app.include_router(api_router, prefix=API_ROUTE)
 
 
 if __name__ == "__main__":
-    if not path.exists("../.env"):
-        with open("../.env", "w"):
+    if not path.exists(ENV_PATH):
+        with open(ENV_PATH, "w"):
             pass
 
-    if not load_dotenv():
+    if not load_dotenv(ENV_PATH):
         exit(0)
 
     try:

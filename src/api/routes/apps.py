@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from yaml import safe_load
 from os import walk, getcwd, getenv, environ
+from dotenv import set_key
 from importlib import import_module
 from contextlib import asynccontextmanager
 from asyncio import create_task
@@ -9,6 +10,7 @@ from api.handler import AppHandler
 
 
 APPS_DIRECTORY = getcwd() + "/apps"
+ENV_PATH = getcwd() + "/.env"
 
 
 def load_config(path: str) -> dict:
@@ -96,6 +98,5 @@ def data(app_id: str, name: str, value: str) -> bool:
             status_code=404, detail="Provided variable isn't supported."
         )
 
-    environ["{}_{}".format(app_name, name)] = value
-
+    set_key(dotenv_path=ENV_PATH, key_to_set="{}_{}".format(app_name, name), value_to_set=value)
     return True
