@@ -1,6 +1,8 @@
 from api.base import Base
+from api.routes.apps import ENV_PATH
 from rgbmatrix import FrameCanvas, graphics
 
+from dotenv import set_key, load_dotenv
 from requests import get, post
 from datetime import datetime, timedelta
 from time import strftime, gmtime, mktime
@@ -29,21 +31,21 @@ class Strava(Base):
             "RGB"
         )
         self.white = graphics.Color(255, 255, 255)
-        self.client_id = getenv("CLIENT_ID")
-        self.client_secret = getenv("CLIENT_SECRET")
+        self.client_id = getenv("STRAVA_CLIENT_ID")
+        self.client_secret = getenv("STRAVA_CLIENT_SECRET")
 
         code = getenv("AUTHORIZATION_CODE")
         if code:
             self._exchange_token(code)
-            del environ["AUTHORIZATION_CODE"], code
+            del environ["STRAVA_AUTHORIZATION_CODE"], code
 
-        self.expires_at = int(getenv("EXPIRES_AT", default="0"))
-        self.refresh_token = getenv("REFRESH_TOKEN")
+        self.expires_at = int(getenv("STRAVA_EXPIRES_AT", default="0"))
+        self.refresh_token = getenv("STRAVA_REFRESH_TOKEN")
         if self._is_expired():
             self._refresh_token()
             return
 
-        self.access_token = getenv("ACCESS_TOKEN")
+        self.access_token = getenv("STRAVA_ACCESS_TOKEN")
 
     def _is_expired(self) -> bool:
         return self.expires_at <= int(datetime.now().timestamp())
@@ -60,9 +62,10 @@ class Strava(Base):
             "refresh_token": self.refresh_token,
         })
 
-        self.expires_at = int(getenv("EXPIRES_AT", default="0"))
-        self.refresh_token = getenv("REFRESH_TOKEN")
-        self.access_token = getenv("ACCESS_TOKEN")
+        self.expires_at = int(getenv("STRAVA_EXPIRES_AT", default="0"))
+        self.refresh_token = getenv("STRAVA_REFRESH_TOKEN")
+        self.access_token = getenv("STRAVA_ACCESS_TOKEN")
+        load_dotenv(ENV_PATH)
 
     def _auth_request(self, data: dict) -> None:
         response = post(AUTH_URL, data={
@@ -70,9 +73,9 @@ class Strava(Base):
             "client_secret": self.client_secret,
         }.update(data)).json()
 
-        environ["ACCESS_TOKEN"] = response["access_token"]
-        environ["REFRESH_TOKEN"] = response["refresh_token"]
-        environ["EXPIRES_AT"] = response["expires_at"]
+        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_ACCESS_TOKEN", value_to_set=response["access_token"])
+        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_REFRESH_TOKEN", value_to_set=response["refresh_token"])
+        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_EXPIRES_AT", value_to_set=response["expires_at"])
 
     def run(self) -> bool:
         if self._is_expired():

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from yaml import safe_load
 from os import walk, getcwd, getenv, environ
-from dotenv import set_key
+from dotenv import set_key, load_dotenv
 from importlib import import_module
 from contextlib import asynccontextmanager
 from asyncio import create_task
@@ -99,4 +99,4 @@ def data(app_id: str, name: str, value: str) -> bool:
         )
 
     set_key(dotenv_path=ENV_PATH, key_to_set="{}_{}".format(app_name, name), value_to_set=value)
-    return True
+    return load_dotenv(ENV_PATH)
