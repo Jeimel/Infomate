@@ -13,6 +13,7 @@ from os import getenv, environ
 
 STRAVA_URL = "https://www.strava.com/api/v3/athlete/activities"
 AUTH_URL = "https://www.strava.com/api/v3/oauth/token"
+REFRESH_URL = "https://www.strava.com/oauth/token"
 STRAVA_IMAGE = "iVBORw0KGgoAAAANSUhEUgAAACcAAAAIAgMAAAAHNw5FAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAJUExURQAAAPxMAv///9aHa3MAAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+gIBQ0pMrUk1YQAAAABb3JOVAHPoneaAAAARUlEQVQI1x3KsQ3AIBADQFN4gEj8PlB8byR7/1US0l1xqJ326N5ATjpjNwFhkjzNhaxLuRaoyVwK+uiyI+RjuR4Zde/PF5WTDvPa5x10AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDI0LTA4LTA1VDEzOjQxOjM0KzAwOjAwJtuDlQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyNC0wOC0wNVQxMzo0MTozNCswMDowMFeGOykAAAAodEVYdGRhdGU6dGltZXN0YW1wADIwMjQtMDgtMDVUMTM6NDE6NTArMDA6MDAyszdiAAAAAElFTkSuQmCC"
 RUNNER_IMAGE = "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAAFtJREFUGFdjZMACKkM9/oOE21fvYIRJwxkwAZCinFAjMFc6rA27wqerqv6LL+qA28Gy5R8jSAykAcNEkKo/Pkxgq0EApBhEYyjEpghDodJGn//3/LeANSOzQXwArNUiByWbNhwAAAAASUVORK5CYII="
 ROAD_IMAGE = "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAGCAYAAAD68A/GAAAAAXNSR0IArs4c6QAAAEtJREFUGFdjZCAAlDb6/L/nv4WREZ86kKK7fpsZlDf5MoAV/vFh+g+iWbb8Q9EIUggziBGkCKYAnQ1SpJbqxYDVanTTYZrxuhHZ/QAu5CRDAMtWogAAAABJRU5ErkJggg=="
@@ -51,13 +52,13 @@ class Strava(Base):
         return self.expires_at <= int(datetime.now().timestamp())
 
     def _exchange_token(self, code: str) -> None:
-        self._auth_request({
+        self._auth_request(AUTH_URL, {
             "code": code,
             "grant_type": "authorization_code",
         })
 
     def _refresh_token(self) -> None:
-        self._auth_request({
+        self._auth_request(REFRESH_URL, {
             "grant_type": "refresh_token",
             "refresh_token": self.refresh_token,
         })
@@ -67,11 +68,13 @@ class Strava(Base):
         self.access_token = getenv("STRAVA_ACCESS_TOKEN")
         load_dotenv(ENV_PATH)
 
-    def _auth_request(self, data: dict) -> None:
-        response = post(AUTH_URL, data={
+    def _auth_request(self, url: str, data: dict) -> None:
+        data.update({
             "client_id": self.client_id,
             "client_secret": self.client_secret,
-        }.update(data)).json()
+        })
+
+        response = post(url, data=data).json()
 
         set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_ACCESS_TOKEN", value_to_set=response["access_token"])
         set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_REFRESH_TOKEN", value_to_set=response["refresh_token"])
