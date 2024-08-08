@@ -61,7 +61,7 @@ class AppHandler:
         except CancelledError:
             raise
 
-    async def set_next(self, next: type) -> None:
+    def set_next(self, next: type) -> None:
         self.next = next
         if self.sleeper:
             self.sleeper.cancel()
