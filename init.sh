@@ -23,22 +23,20 @@ echo "Installing Python dependencies from requirements..."
 pip install -r requirements.txt
 
 SERVICE_NAME="infomate"
-COMMAND_TO_RUN="uvicorn main:app --host 0.0.0.0 --port 8000"
+COMMAND_TO_RUN="sudo uvicorn main:app --host 0.0.0.0 --port 8000"
 
 WORKING_DIR="$HOME/Desktop/Infomate/src"
-PYTHON_ENV="/usr/bin/python3"
-
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
 
 sudo bash -c "cat > $SERVICE_FILE" <<EOL
 [Unit]
-Description=FastAPI Service
+Description=Infomate
 After=network.target
 
 [Service]
 User=$USER
 WorkingDirectory=$WORKING_DIR
-ExecStart=$PYTHON_ENV -m $COMMAND_TO_RUN
+ExecStart=$COMMAND_TO_RUN
 Restart=always
 
 [Install]
