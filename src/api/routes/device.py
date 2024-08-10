@@ -28,6 +28,8 @@ def update():
 
 
 @router.post("/brightness")
-def brightness(brightness: Annotated[int, Path(title="The ID of the item to get", gt=0, le=100)],):
+def brightness(
+    brightness: Annotated[int, Path(title="The ID of the item to get", gt=0, le=100)],
+):
     app_handler.update_brightness(brightness)
     return True

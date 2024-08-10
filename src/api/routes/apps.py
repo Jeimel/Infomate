@@ -75,6 +75,7 @@ def deploy(app_id: str) -> bool:
 
     return True
 
+
 @router.post("/{app_id}/variables")
 def data(app_id: str, name: str, value: str) -> bool:
     if app_id not in APP_PATHS:
@@ -98,5 +99,9 @@ def data(app_id: str, name: str, value: str) -> bool:
             status_code=404, detail="Provided variable isn't supported."
         )
 
-    set_key(dotenv_path=ENV_PATH, key_to_set="{}_{}".format(app_name.upper(), name), value_to_set=value)
+    set_key(
+        dotenv_path=ENV_PATH,
+        key_to_set="{}_{}".format(app_name.upper(), name),
+        value_to_set=value,
+    )
     return load_dotenv(ENV_PATH)
