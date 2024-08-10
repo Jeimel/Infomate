@@ -99,9 +99,12 @@ def data(app_id: str, name: str, value: str) -> bool:
             status_code=404, detail="Provided variable isn't supported."
         )
 
+    key = "{}_{}".format(app_name.upper(), name)
     set_key(
         dotenv_path=ENV_PATH,
-        key_to_set="{}_{}".format(app_name.upper(), name),
+        key_to_set=key,
         value_to_set=value,
     )
-    return load_dotenv(ENV_PATH)
+    environ[key] = value
+
+    return True

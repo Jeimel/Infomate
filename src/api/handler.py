@@ -41,10 +41,10 @@ class AppHandler:
                     self.next = None
 
                 self.app.canvas.Clear()
-                self.app.run()
+                if not self.app.run():
+                    raise Exception("Internal error in current app.")
                 self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
             except Exception as e:
-                print(e)
                 self.app = Clock(self.app.canvas)
                 self.next = None
 
