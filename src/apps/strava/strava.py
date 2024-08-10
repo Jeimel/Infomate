@@ -48,11 +48,13 @@ class Strava(Base):
                 "grant_type": "authorization_code",
             },
         )
+
         set_key(
             dotenv_path=ENV_PATH,
             key_to_set="STRAVA_AUTHORIZATION_CODE",
             value_to_set="",
         )
+        environ["STRAVA_AUTHORIZATION_CODE"] = ""
 
     def _refresh_token(self) -> None:
         self._request(
@@ -88,7 +90,10 @@ class Strava(Base):
             key_to_set="STRAVA_EXPIRES_AT",
             value_to_set=str(response["expires_at"]),
         )
-        load_dotenv(ENV_PATH)
+
+        environ["STRAVA_ACCESS_TOKEN"] = response["access_token"]
+        environ["STRAVA_REFRESH_TOKEN"] = response["refresh_token"]
+        environ["STRAVA_EXPIRES_AT"] = str(response["expires_at"])
 
     def run(self) -> bool:
         if self._is_expired():
