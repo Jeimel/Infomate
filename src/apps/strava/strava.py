@@ -88,6 +88,7 @@ class Strava(Base):
             key_to_set="STRAVA_EXPIRES_AT",
             value_to_set=str(response["expires_at"]),
         )
+        load_dotenv(ENV_PATH)
 
     def run(self) -> bool:
         if self._is_expired():
