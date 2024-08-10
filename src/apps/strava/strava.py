@@ -5,7 +5,7 @@ from rgbmatrix import FrameCanvas, graphics
 from dotenv import set_key, load_dotenv
 from requests import get, post
 from datetime import datetime, timedelta
-from time import strftime, gmtime, mktime
+from time import strftime, gmtime, mktime, time
 from PIL import Image
 from io import BytesIO
 from base64 import b64decode
@@ -32,53 +32,62 @@ class Strava(Base):
             "RGB"
         )
         self.white = graphics.Color(255, 255, 255)
-        self.client_id = getenv("STRAVA_CLIENT_ID")
-        self.client_secret = getenv("STRAVA_CLIENT_SECRET")
 
         code = getenv("STRAVA_AUTHORIZATION_CODE")
-        if code is not None and not code:
+        if code:
             self._exchange_token(code)
 
-        self.expires_at = int(getenv("STRAVA_EXPIRES_AT", default="0"))
-        self.refresh_token = getenv("STRAVA_REFRESH_TOKEN")
-        if self._is_expired():
-            self._refresh_token()
-            return
-
-        self.access_token = getenv("STRAVA_ACCESS_TOKEN")
-
     def _is_expired(self) -> bool:
-        return self.expires_at <= int(datetime.now().timestamp())
+        return int(getenv("STRAVA_EXPIRES_AT", default="0")) <= int(time())
 
     def _exchange_token(self, code: str) -> None:
-        self._auth_request(AUTH_URL, {
-            "code": code,
-            "grant_type": "authorization_code",
-        })
-        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_ACCESS_TOKEN", value_to_set="")
+        self._request(
+            AUTH_URL,
+            {
+                "code": code,
+                "grant_type": "authorization_code",
+            },
+        )
+        set_key(
+            dotenv_path=ENV_PATH,
+            key_to_set="STRAVA_AUTHORIZATION_CODE",
+            value_to_set="",
+        )
 
     def _refresh_token(self) -> None:
-        self._auth_request(REFRESH_URL, {
-            "grant_type": "refresh_token",
-            "refresh_token": self.refresh_token,
-        })
+        self._request(
+            REFRESH_URL,
+            {
+                "grant_type": "refresh_token",
+                "refresh_token": getenv("STRAVA_REFRESH_TOKEN"),
+            },
+        )
 
-        self.expires_at = int(getenv("STRAVA_EXPIRES_AT", default="0"))
-        self.refresh_token = getenv("STRAVA_REFRESH_TOKEN")
-        self.access_token = getenv("STRAVA_ACCESS_TOKEN")
-        load_dotenv(ENV_PATH)
-
-    def _auth_request(self, url: str, data: dict) -> None:
-        data.update({
-            "client_id": self.client_id,
-            "client_secret": self.client_secret,
-        })
+    def _request(self, url: str, data: dict) -> None:
+        data.update(
+            {
+                "client_id": getenv("STRAVA_CLIENT_ID"),
+                "client_secret": getenv("STRAVA_CLIENT_SECRET"),
+            }
+        )
 
         response = post(url, data=data).json()
 
-        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_ACCESS_TOKEN", value_to_set=response["access_token"])
-        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_REFRESH_TOKEN", value_to_set=response["refresh_token"])
-        set_key(dotenv_path=ENV_PATH, key_to_set="STRAVA_EXPIRES_AT", value_to_set=str(response["expires_at"]))
+        set_key(
+            dotenv_path=ENV_PATH,
+            key_to_set="STRAVA_ACCESS_TOKEN",
+            value_to_set=response["access_token"],
+        )
+        set_key(
+            dotenv_path=ENV_PATH,
+            key_to_set="STRAVA_REFRESH_TOKEN",
+            value_to_set=response["refresh_token"],
+        )
+        set_key(
+            dotenv_path=ENV_PATH,
+            key_to_set="STRAVA_EXPIRES_AT",
+            value_to_set=str(response["expires_at"]),
+        )
 
     def run(self) -> bool:
         if self._is_expired():
@@ -98,9 +107,14 @@ class Strava(Base):
             },
             headers={
                 "accept": "application/json",
-                "authorization": "Bearer {}".format(self.access_token),
+                "authorization": "Bearer {}".format(getenv("STRAVA_ACCESS_TOKEN")),
             },
-        ).json()
+        )
+
+        if response.status_code != 200:
+            return False
+
+        response = response.json()
 
         num_activities = 0
         distance_sum = 0.0
@@ -166,5 +180,5 @@ class Strava(Base):
             "AUTHORIZATION_CODE",
             "REFRESH_TOKEN",
             "ACCESS_TOKEN",
-            "EXPIRES_AT"
+            "EXPIRES_AT",
         ]
