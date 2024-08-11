@@ -5,16 +5,15 @@ from subprocess import Popen, PIPE
 
 from api.routes.apps import app_handler
 
-
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", tags=["device"])
 def device():
     return {"name": gethostname(), "brightness": app_handler.matrix.brightness}
 
 
-@router.post("/update")
+@router.post("/update", tags=["update"])
 def update():
     process = Popen(["git", "pull"], stdout=PIPE)
 
@@ -27,9 +26,11 @@ def update():
         raise HTTPException(status_code=500, detail="Can't update repository.")
 
 
-@router.post("/brightness")
+@router.post("/brightness", tags=["brightness"])
 def brightness(
-    brightness: Annotated[int, Path(title="The ID of the item to get", gt=0, le=100)],
+    brightness: Annotated[
+        int, Path(title="The brightness of the display", gt=0, le=100)
+    ],
 ):
     app_handler.update_brightness(brightness)
     return True

@@ -13,9 +13,35 @@ from api.routes.apps import lifespan, ENV_PATH
 
 
 API_ROUTE = "/api"
+TAGS_METADATA = [
+    {
+        "name": "device",
+        "description": "Get infomration about device.",
+    },
+    {
+        "name": "upadte",
+        "description": "Pull the most recent changes. Updates will be applied on next restart.",
+    },
+    {
+        "name": "brightness",
+        "description": "Update brightness of device. Must be in range of [1, 100].",
+    },
+    {
+        "name": "apps",
+        "description": "List available apps with metadata.",
+    },
+    {
+        "name": "deploy",
+        "description": "Deploy **app_id** on device. Must be available.",
+    },
+    {
+        "name": "variables",
+        "description": "Set variable of **app_id**. Must be listed.",
+    },
+]
 
 
-app = FastAPI(title="Infomate", lifespan=lifespan)
+app = FastAPI(title="Infomate", lifespan=lifespan, openapi_tags=TAGS_METADATA)
 app.include_router(api_router, prefix=API_ROUTE)
 
 
