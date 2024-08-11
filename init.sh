@@ -3,24 +3,27 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-echo "Cloning submodules..."
-git submodule update --init --recursive
+echo -n "Cloning submodules..."
+git submodule update --init --recursive >/dev/null
+echo "Done."
 
-echo "Entering rpi-rgb-led-matrix directory..."
-cd rpi-rgb-led-matrix
+echo -n "Updating package list and installing dependencies... "
+cd rpi-rgb-led-matrix >/dev/null
+echo "Done."
 
-echo "Updating package list and installing dependencies..."
-sudo apt-get update
-sudo apt-get install -y python3-dev python3-pillow
+sudo apt-get update >/dev/null
+sudo apt-get install -y python3-dev python3-pillow >/dev/null
 
-echo "Building and installing Python bindings..."
-make build-python PYTHON=$(command -v python3)
-sudo make install-python PYTHON=$(command -v python3)
+echo -n "Building and installing Python bindings... "
+make build-python PYTHON=$(command -v python3) >/dev/null
+sudo make install-python PYTHON=$(command -v python3) >/dev/null
 
 cd ..
+echo "Done."
 
-echo "Installing Python dependencies from requirements..."
-pip install -r requirements.txt
+echo -n "Installing Python dependencies from requirements... "
+pip install -r requirements.txt >/dev/null
+echo "Done."
 
 SERVICE_NAME="infomate"
 COMMAND_TO_RUN="sudo uvicorn main:app --host 0.0.0.0 --port 8000"
@@ -41,11 +44,16 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-EOL
+EOL >/dev/null
 
-sudo systemctl daemon-reload
-sudo systemctl enable $SERVICE_NAME
-sudo systemctl start $SERVICE_NAME
-echo "Systemd service $SERVICE_NAME created, enabled, and started."
+echo -n "Created systemd service $SERVICE_NAME... "
+sudo systemctl daemon-reload >/dev/null
+echo "Done."
 
-echo "Script completed successfully."
+echo -n "Enable systemd service $SERVICE_NAME... "
+sudo systemctl enable $SERVICE_NAME >/dev/null
+echo "Done."
+
+echo -n "Start systemd service $SERVICE_NAME... "
+sudo systemctl start $SERVICE_NAME >/dev/null
+echo "Done."
