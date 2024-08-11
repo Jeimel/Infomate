@@ -4,25 +4,25 @@
 set -e
 
 echo -n "Cloning submodules..."
-git submodule update --init --recursive >/dev/null
+git submodule update --init --recursive &>/dev/null
 echo "Done."
 
 echo -n "Updating package list and installing dependencies... "
-cd rpi-rgb-led-matrix >/dev/null
+cd rpi-rgb-led-matrix &>/dev/null
 echo "Done."
 
-sudo apt-get update >/dev/null
-sudo apt-get install -y python3-dev python3-pillow >/dev/null
+sudo apt-get update &>/dev/null
+sudo apt-get install -y python3-dev python3-pillow &>/dev/null
 
 echo -n "Building and installing Python bindings... "
-make build-python PYTHON=$(command -v python3) >/dev/null
-sudo make install-python PYTHON=$(command -v python3) >/dev/null
+make build-python PYTHON=$(command -v python3) &>/dev/null
+sudo make install-python PYTHON=$(command -v python3) &>/dev/null
 
 cd ..
 echo "Done."
 
 echo -n "Installing Python dependencies from requirements... "
-pip install -r requirements.txt >/dev/null
+pip install -r requirements.txt &>/dev/null
 echo "Done."
 
 SERVICE_NAME="infomate"
@@ -44,7 +44,7 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-EOL >/dev/null
+EOL
 
 echo -n "Created systemd service $SERVICE_NAME... "
 sudo systemctl daemon-reload >/dev/null
