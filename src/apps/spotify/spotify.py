@@ -47,7 +47,7 @@ class Spotify(Base):
             key_to_set="SPOTIFY_AUTHORIZATION_CODE",
             value_to_set="",
         )
-        environ["STRAVA_AUTHORIZATION_CODE"] = ""
+        environ["SPOTIFY_AUTHORIZATION_CODE"] = ""
 
     def _refresh_token(self) -> None:
         self._request(
@@ -84,9 +84,9 @@ class Spotify(Base):
             value_to_set=str(int(time()) + response["expires_in"]),
         )
 
-        environ["STRAVA_ACCESS_TOKEN"] = response["access_token"]
-        environ["STRAVA_REFRESH_TOKEN"] = response["refresh_token"]
-        environ["STRAVA_EXPIRES_AT"] = str(response["expires_at"])
+        environ["SPOTIFY_ACCESS_TOKEN"] = response["access_token"]
+        environ["SPOTIFY_REFRESH_TOKEN"] = response["refresh_token"]
+        environ["SPOTIFY_EXPIRES_AT"] = str(response["expires_at"])
 
     def run(self) -> bool:
         access_token = getenv("SPOTIFY_ACCESS_TOKEN")
