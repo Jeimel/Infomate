@@ -13,7 +13,7 @@ def device():
     return {"name": gethostname(), "brightness": app_handler.matrix.brightness}
 
 
-@router.post("/update", tags=["update"])
+@router.post("/update")
 def update():
     process = Popen(["git", "pull"], stdout=PIPE)
 
@@ -26,7 +26,7 @@ def update():
         raise HTTPException(status_code=500, detail="Can't update repository.")
 
 
-@router.post("/brightness", tags=["brightness"])
+@router.post("/brightness")
 def brightness(
     brightness: Annotated[
         int, Path(title="The brightness of the display", gt=0, le=100)

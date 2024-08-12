@@ -60,7 +60,7 @@ def apps() -> dict:
     return {"Apps": APP_MANIFESTS}
 
 
-@router.post("/{app_id}/deploy", tags=["deploy"])
+@router.post("/{app_id}/deploy")
 def deploy(app_id: str) -> bool:
     if app_id not in APP_PATHS:
         raise HTTPException(status_code=404, detail="App not found.")
@@ -76,7 +76,7 @@ def deploy(app_id: str) -> bool:
     return True
 
 
-@router.post("/{app_id}/variables", tags=["variables"])
+@router.post("/{app_id}/variables")
 def data(app_id: str, name: str, value: str) -> bool:
     if app_id not in APP_PATHS:
         raise HTTPException(status_code=404, detail="App not found.")

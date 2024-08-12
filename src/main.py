@@ -16,27 +16,11 @@ API_ROUTE = "/api"
 TAGS_METADATA = [
     {
         "name": "device",
-        "description": "Get infomration about device.",
-    },
-    {
-        "name": "upadte",
-        "description": "Pull the most recent changes. Updates will be applied on next restart.",
-    },
-    {
-        "name": "brightness",
-        "description": "Update brightness of device. Must be in range of [1, 100].",
+        "description": "Get information about device, update to latest version and set brightness.",
     },
     {
         "name": "apps",
-        "description": "List available apps with metadata.",
-    },
-    {
-        "name": "deploy",
-        "description": "Deploy **app_id** on device. Must be available.",
-    },
-    {
-        "name": "variables",
-        "description": "Set variable of **app_id**. Must be listed.",
+        "description": "List available apps with metadata, deploy and set variables for **app_id**.",
     },
 ]
 
