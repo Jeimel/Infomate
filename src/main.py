@@ -16,7 +16,7 @@ API_ROUTE = "/api"
 TAGS_METADATA = [
     {
         "name": "device",
-        "description": "Get information about device, update to latest version and set brightness.",
+        "description": "Get information about device, update to latest version, set brightness and see logs",
     },
     {
         "name": "apps",

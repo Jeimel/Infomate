@@ -2,25 +2,12 @@ from fastapi import APIRouter, HTTPException, Path
 from typing_extensions import Annotated
 from socket import gethostname
 from subprocess import Popen, PIPE
-from logging import getLogger, DEBUG, StreamHandler, Formatter
-from io import StringIO
 
 from api.routes.apps import app_handler
+from api.main import logger_buffer
 
 
 router = APIRouter()
-
-logger = getLogger("uvicorn")
-logger.setLevel(DEBUG)
-
-logger_buffer = StringIO()
-handler = StreamHandler(logger_buffer)
-handler.setLevel(DEBUG)
-
-formatter = Formatter("%(asctime)s - %(levelname)s - %(message)s")
-handler.setFormatter(formatter)
-
-logger.addHandler(handler)
 
 
 @router.get("/", tags=["device"])
@@ -43,8 +30,8 @@ def update():
 
 @router.get("/logs")
 def logs():
-    log_output = logger_buffer.getvalue().split("\n")
-    return {"logs": log_output}
+    output = logger_buffer.getvalue().split("\n")
+    return {"logs": output}
 
 
 @router.post("/brightness")

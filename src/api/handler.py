@@ -2,6 +2,7 @@ from asyncio import sleep, create_task, CancelledError
 
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from apps.clock.clock import Clock
+from api.main import logger
 import config
 
 
@@ -45,6 +46,7 @@ class AppHandler:
                     raise Exception("Internal error in current app.")
                 self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
             except Exception as e:
+                logger.exception(e)
                 self.app = Clock(self.app.canvas)
                 self.next = None
 
