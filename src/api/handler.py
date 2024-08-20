@@ -1,9 +1,44 @@
 from asyncio import sleep, create_task, CancelledError
 
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
+from api.base import Base
+from rgbmatrix import RGBMatrix, RGBMatrixOptions, FrameCanvas, graphics
 from apps.clock.clock import Clock
 from api.main import logger
 import config
+
+
+FONT_NAME = "6x10"
+SMALL_FONT_NAME = "4x6"
+
+
+class ErrorApp(Base):
+    def __init__(self, canvas: FrameCanvas):
+        super().__init__(canvas)
+        self.font = Base.get_font(FONT_NAME)
+        self.small_font = Base.get_font(SMALL_FONT_NAME)
+        self.red_color = graphics.color(255, 0, 0)
+        self.white_color = graphics.color(255, 255, 255)
+
+    def run(self) -> bool:
+        graphics.DrawText(
+            self.canvas,
+            self.font,
+            14,
+            5,
+            self.red_color,
+            "Error!",
+        )
+        graphics.DrawText(
+            self.canvas,
+            self.small_font,
+            14,
+            17,
+            self.white_color,
+            "See logs.",
+        )
+
+        self.sleep(60 * 1000)
+        return True
 
 
 class AppHandler:
@@ -47,7 +82,7 @@ class AppHandler:
                 self.app.canvas = self.matrix.SwapOnVSync(self.app.canvas)
             except Exception as e:
                 logger.exception(e)
-                self.app = Clock(self.app.canvas)
+                self.app = ErrorApp(self.app.canvas)
                 self.next = None
 
             self.sleeper = create_task(self.delay())
