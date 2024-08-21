@@ -7,12 +7,21 @@ from dataclasses import dataclass
 from typing import List
 from requests import get
 from io import BytesIO
+from os import getenv
+
 
 DATE_FORMAT = "%Y-%m-%dT%H:%MZ"
-ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard"
+ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/{league}/scoreboard"
 FONT_SMALL_NAME = "4x6"
 FONT_NAME = "7x13B"
-LEAGUE_ABBREVIATION = {"GER.1": "Bund"}
+DEFAULT_LEAGUE = "ger.1"
+LEAGUE_ABBREVIATION = {
+    "ger.1": "Bund",
+    "esp.1": "Liga",
+    "eng.1": "EPL",
+    "uefa.champions": "UCL",
+    "uefa.europa": "Euro",
+}
 
 
 @dataclass
@@ -42,13 +51,17 @@ class League:
 class Soccer(Base):
     def __init__(self, canvas: FrameCanvas):
         super().__init__(canvas)
+        self.league_name = getenv("SOCCER_LEAGUE", default=DEFAULT_LEAGUE)
+        if self.league_name not in LEAGUE_ABBREVIATION:
+            self.league_name = DEFAULT_LEAGUE
+
         self.small_font = Base.get_font(FONT_SMALL_NAME)
         self.font = Base.get_font(FONT_NAME)
         self.white = graphics.Color(255, 255, 255)
         self.index = 0
 
     def run(self) -> bool:
-        league = Soccer.get_league()
+        league = Soccer.get_league(self.league_name)
         if len(league.events) == 0:
             return False
 
@@ -129,9 +142,17 @@ class Soccer(Base):
         return True
 
     @staticmethod
-    def get_league():
-        response = get(url=ESPN_URL).json()
-        name = response["leagues"][0]["midsizeName"]
+    def env() -> bool:
+        return True
+
+    @staticmethod
+    def variables() -> list:
+        return ["LEAGUE"]
+
+    @staticmethod
+    def get_league(league_name: str):
+        response = get(url=ESPN_URL.format(league=league_name)).json()
+        name = response["leagues"][0]["midsizeName"].lower()
         if name in LEAGUE_ABBREVIATION:
             name = LEAGUE_ABBREVIATION[name]
         league = League(name, [])

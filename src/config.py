@@ -1,6 +1,6 @@
 # Display rows. Default: 32
 LED_ROWS = 32
-# Display columns. Default: 32
+# Display columns. Default: 64
 LED_COLS = 64
 # Daisy-chained boards. Default: 1
 CHAIN_LENGTH = 1
