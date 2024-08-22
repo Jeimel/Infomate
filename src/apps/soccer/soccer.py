@@ -14,13 +14,15 @@ DATE_FORMAT = "%Y-%m-%dT%H:%MZ"
 ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer/{league}/scoreboard"
 FONT_SMALL_NAME = "4x6"
 FONT_NAME = "7x13B"
-DEFAULT_LEAGUE = "ger.1"
-LEAGUE_ABBREVIATION = {
-    "ger.1": "Bund",
-    "esp.1": "Liga",
-    "eng.1": "EPL",
-    "uefa.champions": "UCL",
-    "uefa.europa": "Euro",
+DEFAULT_LEAGUE = "Bundesliga"
+LEAGUES = {
+    "Bundesliga": {"code": "ger.1", "abbreviation": "Bund"},
+    "La Liga": {"code": "esp.1", "abbreviation": "Liga"},
+    "Premier League": {"code": "eng.1", "abbreviation": "PL"},
+    "Champions League": {"code": "uefa.champions", "abbreviation": "UCL"},
+    "Europa League": {"code": "uefa.europa", "abbreviation": "Euro"},
+    "Ligue 1": {"code": "fra.1", "abbreviation": "L1"},
+    "Serie A": {"code": "ita.1", "abbreviation": "SerA"},
 }
 
 
@@ -51,9 +53,9 @@ class League:
 class Soccer(Base):
     def __init__(self, canvas: FrameCanvas):
         super().__init__(canvas)
-        self.league_name = getenv("SOCCER_LEAGUE", default=DEFAULT_LEAGUE)
-        if self.league_name not in LEAGUE_ABBREVIATION:
-            self.league_name = DEFAULT_LEAGUE
+        self.league_name = LEAGUES.get(
+            getenv("SOCCER_LEAGUE", DEFAULT_LEAGUE), LEAGUES[DEFAULT_LEAGUE]
+        )
 
         self.small_font = Base.get_font(FONT_SMALL_NAME)
         self.font = Base.get_font(FONT_NAME)
@@ -61,7 +63,9 @@ class Soccer(Base):
         self.index = 0
 
     def run(self) -> bool:
-        league = Soccer.get_league(self.league_name)
+        league = Soccer.get_league(
+            self.league_name["code"], self.league_name["abbreviation"]
+        )
         if len(league.events) == 0:
             return False
 
@@ -150,12 +154,12 @@ class Soccer(Base):
         return ["LEAGUE"]
 
     @staticmethod
-    def get_league(league_name: str):
-        response = get(url=ESPN_URL.format(league=league_name)).json()
-        name = response["leagues"][0]["midsizeName"].lower()
-        if name in LEAGUE_ABBREVIATION:
-            name = LEAGUE_ABBREVIATION[name]
-        league = League(name, [])
+    def get_league(
+        code: str,
+        abbreviation: str,
+    ):
+        response = get(url=ESPN_URL.format(league=code)).json()
+        league = League(abbreviation, [])
 
         for event_json in response["events"]:
             league.events.append(Soccer.load_event(event_json))
