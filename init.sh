@@ -3,6 +3,18 @@
 # Exit immediately if a command exits with a non-zero status
 set -e
 
+if [[ $EUID > 0 ]]
+  then echo "Please run as root."
+  exit 1
+fi
+
+error_exit() {
+    echo "Failed."
+    exit 1
+}
+
+trap error_exit ERR
+
 echo -n "Cloning submodules... "
 git submodule update --init --recursive &>/dev/null
 echo "Done."
