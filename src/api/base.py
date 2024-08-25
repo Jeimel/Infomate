@@ -26,3 +26,22 @@ class Base:
         font.LoadFont(f"../rpi-rgb-led-matrix/fonts/{name}.bdf")
 
         return font
+
+    @staticmethod
+    def hex_to_rgb(hex: str) -> tuple:
+        return tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4))
+
+    @staticmethod
+    def draw_rect(
+        canvas: FrameCanvas,
+        x0: int,
+        y0: int,
+        x1: int,
+        y1: int,
+        color: tuple[int, int, int],
+    ):
+        assert x0 < x1 and y0 < y1 and x0 + x1 < 64 and y0 + y1 < 64
+
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                canvas.setPixel(x, y, color[0], color[1], color[2])

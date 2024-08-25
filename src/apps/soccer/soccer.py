@@ -106,44 +106,38 @@ class Soccer(Base):
         )
 
         for competitor in current_event.competitors:
-            y_range = range(0, 13) if competitor.home else range(13, 26)
-            for y in y_range:
-                for x in range(0, 64):
-                    self.canvas.SetPixel(
-                        x,
-                        y,
-                        competitor.color[0],
-                        competitor.color[1],
-                        competitor.color[2],
-                    )
-
-            logo_transparent = Image.open(BytesIO(get(competitor.logo).content))
-            logo = Image.new("RGBA", logo_transparent.size, competitor.color)
-            logo.paste(logo_transparent, mask=logo_transparent)
-
-            image_y = 0 if competitor.home else 13
-            self.canvas.SetImage(logo.convert("RGB").resize((13, 13)), 0, image_y)
-
-            text_y = 11 if competitor.home else 24
-            graphics.DrawText(
-                self.canvas,
-                self.font,
-                18,
-                text_y,
-                competitor.text_color,
-                competitor.name,
-            )
-            graphics.DrawText(
-                self.canvas,
-                self.font,
-                54,
-                text_y,
-                competitor.text_color,
-                competitor.score,
-            )
+            start, end = (0, 13) if competitor.home else (13, 26)
+            self.draw_rect(self.canvas, 0, start, 64, end, competitor.color)
+            self.draw_competitor(competitor, range(start, end))
 
         self.sleep(15 * 1000)
         return True
+
+    def draw_competitor(self, competitor: Competitor, y_range: range):
+        logo_transparent = Image.open(BytesIO(get(competitor.logo).content))
+        logo = Image.new("RGBA", logo_transparent.size, competitor.color)
+        logo.paste(logo_transparent, mask=logo_transparent)
+
+        image_y = 0 if competitor.home else 13
+        self.canvas.SetImage(logo.convert("RGB").resize((13, 13)), 0, image_y)
+
+        text_y = 11 if competitor.home else 24
+        graphics.DrawText(
+            self.canvas,
+            self.font,
+            18,
+            text_y,
+            competitor.text_color,
+            competitor.name,
+        )
+        graphics.DrawText(
+            self.canvas,
+            self.font,
+            54,
+            text_y,
+            competitor.text_color,
+            competitor.score,
+        )
 
     @staticmethod
     def env() -> bool:
@@ -196,7 +190,3 @@ class Soccer(Base):
             )
             + "&h=50&w=50",
         )
-
-    @staticmethod
-    def hex_to_rgb(hex: str) -> tuple:
-        return tuple(int(hex[i : i + 2], 16) for i in (0, 2, 4))
