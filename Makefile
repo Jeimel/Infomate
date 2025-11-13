@@ -5,7 +5,7 @@ TARGET = infomate
 
 all:
 	@mkdir -p $(BUILD_DIR)
-	@cd $(BUILD_DIR) && cmake .. > /dev/null
+	@cd $(BUILD_DIR) && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .. > /dev/null
 	@cmake --build $(BUILD_DIR) --target $(TARGET)
 
 run: all
@@ -13,5 +13,7 @@ run: all
 
 clean:
 	@rm -rf $(BUILD_DIR)
+	@rm -f compile_commands.json
 
 rebuild: clean all
+
