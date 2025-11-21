@@ -8,4 +8,11 @@
 git clone --recursive https://github.com/Jeimel/Infomate.git
 ```
 
-2. Run `make`
+2. Run these commands
+
+```
+mkdir build
+cd build
+cmake ..
+make
+```
