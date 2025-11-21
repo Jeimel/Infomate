@@ -1,3 +1,9 @@
-[submodule "rpi-rgb-led-matrix"]
-	path = rpi-rgb-led-matrix
+[submodule "external/rpi-rgb-led-matrix"]
+	path = external/rpi-rgb-led-matrix
 	url = https://github.com/hzeller/rpi-rgb-led-matrix.git
+[submodule "external/crow"]
+	path = external/crow
+	url = https://github.com/CrowCpp/Crow.git
+[submodule "external/asio"]
+	path = external/asio
+	url = https://github.com/chriskohlhoff/asio.git
