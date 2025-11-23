@@ -4,7 +4,7 @@
 #include <sstream>
 
 #include "canvas.h"
-#include "port.h"
+#include "display.h"
 
 namespace Infomate::adapter {
 

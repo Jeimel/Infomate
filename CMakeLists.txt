@@ -63,9 +63,10 @@ set(SOURCES
 
 set(HEADERS
     include/app.h
-    include/port.h
-    include/registry.h
+    include/display.h
+    include/input.h
     include/manager.h
+    include/registry.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
