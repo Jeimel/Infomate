@@ -14,7 +14,7 @@ class AppManager : public port::InputPort {
 
     ~AppManager() { stop(); }
 
-    void start();
+    void run();
     void stop();
 
     bool swap(const std::string& appId) override;
@@ -25,8 +25,6 @@ class AppManager : public port::InputPort {
     void setBrightness(int b) override { brightness = std::clamp(b, 0, 100); }
 
    private:
-    void loop();
-
     std::unique_ptr<port::DisplayPort> display;
     std::unique_ptr<app::App> app;
 
