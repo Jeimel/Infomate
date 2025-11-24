@@ -20,7 +20,7 @@ class App {
 
     virtual int update(rgb_matrix::Canvas* c) = 0;
 
-    virtual void configure(const ConfigMap& config) {}
+    virtual bool configure(const ConfigMap& config) { return false; }
 };
 
 }  // namespace Infomate::app
