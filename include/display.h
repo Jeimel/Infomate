@@ -8,7 +8,7 @@ class DisplayPort {
    public:
     virtual ~DisplayPort() = default;
 
-    virtual void shutdown() = 0;
+    virtual void stop() = 0;
 
     virtual rgb_matrix::Canvas* getCanvas() = 0;
 

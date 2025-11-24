@@ -46,7 +46,7 @@ void AppManager::run() {
         cv.wait_for(lock, target - elapsed, [this] { return !running || changed; });
     }
 
-    display->shutdown();
+    display->stop();
 }
 
 void AppManager::stop() {
@@ -71,10 +71,7 @@ bool AppManager::swap(const std::string& appId) {
 bool AppManager::configure(const app::ConfigMap& config) {
     std::lock_guard<std::mutex> lock(mutex);
 
-    if (!app) return false;
-
-    app->configure(config);
-    return true;
+    return app ? app->configure(config) : false;
 }
 
 std::string AppManager::current() const {

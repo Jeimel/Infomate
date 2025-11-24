@@ -49,27 +49,27 @@ class TerminalAdapter : public port::DisplayPort {
    public:
     TerminalAdapter() : canvas() {}
 
-    void shutdown() override { std::cout << "\033[?25h\033[0m\n"; }
+    void stop() override {}
 
     rgb_matrix::Canvas* getCanvas() override { return &canvas; }
 
     void present() override {
-        const std::string white = "\033[48;2;255;255;255m";
+        const std::string color = "\033[48;2;34;34;34m";
         const std::string reset = "\033[0m";
-        const std::string border = white + std::string((canvas.width() + 2) * 2, ' ') + reset;
+        const std::string border = color + std::string((canvas.width() + 2) * 2, ' ') + reset;
 
         std::ostringstream out;
 
         out << border + "\n";
 
         for (int y = 0; y < canvas.height(); y++) {
-            out << white << "  ";
+            out << color << "  ";
 
             for (int x = 0; x < canvas.width(); x++) {
                 out << *canvas.at(x, y);
             }
 
-            out << reset << white << "  " << reset << "\n";
+            out << reset << color << "  " << reset << "\n";
         }
 
         out << border + "\n";
