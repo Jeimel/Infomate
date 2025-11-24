@@ -9,6 +9,10 @@ class InputPort {
     InputPort(AppManager& manager) : manager(manager) {}
     virtual ~InputPort() = default;
 
+    virtual void run() = 0;
+
+    virtual void stop() = 0;
+
    protected:
     AppManager& manager;
 };

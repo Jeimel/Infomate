@@ -83,5 +83,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
+    INFOMATE_VERSION="${PROJECT_VERSION}"
     FONT_DIR="${MATRIX_DIR}/fonts"
 )
